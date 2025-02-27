@@ -109,8 +109,8 @@ jobs:
           sed -i "s/$find/$replace/g" zephyr/drivers/retained_mem/retained_mem_nrf_ram_ctrl.c
           sudo rm -rf Releases
           mkdir Releases
-          sudo rm -rf SlimeVR-Tracker-nRF/build
-          mkdir SlimeVR-Tracker-nRF/build
+          sudo rm -rf SlimeVR-Tracker-nRF-Receiver/build
+          mkdir SlimeVR-Tracker-nRF-Receiver/build
 
           west build \
               --board nrf52840dongle/nrf52840 \
@@ -127,8 +127,8 @@ jobs:
         if: always()
         run: |
           cd zephyr-workspace
-          sudo rm -rf SlimeVR-Tracker-nRF/build
-          mkdir SlimeVR-Tracker-nRF/build
+          sudo rm -rf SlimeVR-Tracker-nRF-Receiver/build
+          mkdir SlimeVR-Tracker-nRF-Receiver/build
 
           west build \
               --board supermini_uf2/nrf52840 \
@@ -145,8 +145,8 @@ jobs:
         if: always()
         run: |
           cd zephyr-workspace
-          sudo rm -rf SlimeVR-Tracker-nRF/build
-          mkdir SlimeVR-Tracker-nRF/build
+          sudo rm -rf SlimeVR-Tracker-nRF-Receiver/build
+          mkdir SlimeVR-Tracker-nRF-Receiver/build
 
           west build \
               --board xiao_ble/nrf52840 \
@@ -163,8 +163,8 @@ jobs:
         if: always()
         run: |
           cd zephyr-workspace
-          sudo rm -rf SlimeVR-Tracker-nRF/build
-          mkdir SlimeVR-Tracker-nRF/build
+          sudo rm -rf SlimeVR-Tracker-nRF-Receiver/build
+          mkdir SlimeVR-Tracker-nRF-Receiver/build
 
           west build \
               --board etee_dongle_uf2/nrf52840 \
@@ -182,8 +182,8 @@ jobs:
         run: |
           cd zephyr-workspace
           find='.dt_size\s=\sDT_REG_SIZE(DT_PARENT(node_id))}'
-          sudo rm -rf SlimeVR-Tracker-nRF/build
-          mkdir SlimeVR-Tracker-nRF/build
+          sudo rm -rf SlimeVR-Tracker-nRF-Receiver/build
+          mkdir SlimeVR-Tracker-nRF-Receiver/build
 
           west build \
               --board nrf52840dk/nrf52840 \
