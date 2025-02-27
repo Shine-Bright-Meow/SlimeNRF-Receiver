@@ -1,4 +1,7 @@
 on:
+  pull_request:
+    branches:
+      - master
   push:
     branches:
       - master
@@ -145,8 +148,8 @@ jobs:
 
           mv SlimeVR-Tracker-nRF-Receiver/build/SlimeVR-Tracker-nRF-Receiver/zephyr/zephyr.uf2 Releases/SlimeNRF_XIAO_Receiver.uf2
 
-      - name: 🔨 Build SlimeVR-Tracker-nRF-Receiver - ete Dongle
-      # Receiver Firmware Build for XIAO
+      - name: 🔨 Build SlimeVR-Tracker-nRF-Receiver - etee Dongle
+      # Receiver Firmware Build for etee Dongle
         if: always()
         run: |
           cd zephyr-workspace
