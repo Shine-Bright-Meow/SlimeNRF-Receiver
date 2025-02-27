@@ -33,12 +33,12 @@ jobs:
 
       - name: 🧹 Clean Landing Site
         run: |
-          sudo rm -rf zephyr-workspace/SlimeVR-Tracker-nRF-Receiver
+          sudo rm -rf zephyr-workspace/SlimeNRF-CI
       - uses: actions/checkout@v4
         with:
           # Clone the repo to a subdirectory, so we can initialize the Zephyr
           # workspace in the parent directory.
-          path: zephyr-workspace/SlimeVR-Tracker-nRF-Receiver
+          path: zephyr-workspace/SlimeNRF-CI
 
       - name: 🧰 Install Dependencies + West
         # Install the Zephyr host build dependencies, and the `west` Python tool. This list is from
@@ -90,7 +90,7 @@ jobs:
         run: |
           cd zephyr-workspace
           sudo rm -rf .west
-          west init -l SlimeVR-Tracker-nRF-Receiver
+          west init -l SlimeNRF-CI
           west update --narrow -o=--depth=1
           west zephyr-export
 
