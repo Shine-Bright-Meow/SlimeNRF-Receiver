@@ -251,9 +251,6 @@ jobs:
           body: |
             Successful build of the latest SlimeNRF Firmware. (Automated)
           files: |
-            zephyr-workspace/Releases/SlimeNRF_Nordic_eByte_Dongle_Receiver.hex
-            zephyr-workspace/Releases/SlimeNRF_SuperMini_Receiver.uf2
-            zephyr-workspace/Releases/SlimeNRF_XIAO_Receiver.uf2
-            zephyr-workspace/Releases/SlimeNRF_etee_Receiver.uf2
-            zephyr-workspace/Releases/SlimeNRF_nRF52840dk_Receiver.hex
+            zephyr-workspace/Releases/*.hex
+            zephyr-workspace/Releases/*.uf2
           clear_attachments: false
