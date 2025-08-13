@@ -1,10 +1,10 @@
 on:
   pull_request:
     branches:
-      - master
+      - butterfly
   push:
     branches:
-      - master
+      - butterfly
   create:
   workflow_dispatch:
 
