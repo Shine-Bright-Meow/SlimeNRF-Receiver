@@ -17,7 +17,6 @@
 		group1 {
 			psels = <NRF_PSEL(PWM_OUT0, 0, 3)>;
 			low-power-enable;
-			output-high;
 		};
 	};
 };
@@ -66,7 +65,7 @@
 	};
 
 	zephyr,user {
-		led-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+		led-gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
 	};
 };
 
