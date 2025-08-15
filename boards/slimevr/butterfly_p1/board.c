@@ -5,54 +5,52 @@
  */
 
 #include <zephyr/init.h>
+#include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/pwm.h>
 #include <zephyr/logging/log.h>
 #include <hal/nrf_gpio.h>
-#include <hal/nrf_pwm.h>
 
 LOG_MODULE_REGISTER(board, LOG_LEVEL_INF);
 
-#define PWM_NODE DT_NODELABEL(pwm0)
-#define LED_PIN 3
+static struct k_work_delayable led_fix_work;
 
-static int board_pre_init(void)
-{
-	nrf_gpio_cfg_output(NRF_GPIO_PIN_MAP(0, LED_PIN));
-	nrf_gpio_pin_set(NRF_GPIO_PIN_MAP(0, LED_PIN));
-	
-	return 0;
-}
-SYS_INIT(board_pre_init, PRE_KERNEL_1, 0);
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
-static void fix_pwm_led_state(void)
+static const struct pwm_dt_spec pwm_led = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));
+
+static void led_fix_work_handler(struct k_work *work)
 {
-	const struct device *pwm_dev;
-	NRF_PWM_Type *pwm_reg = (NRF_PWM_Type *)DT_REG_ADDR(PWM_NODE);
+	int ret;
 	
-	pwm_dev = DEVICE_DT_GET(PWM_NODE);
-	if (!device_is_ready(pwm_dev)) {
-		return;
+	LOG_INF("Fixing LED state...");
+	
+	if (device_is_ready(led.port)) {
+		gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
+		gpio_pin_set_dt(&led, 0); // 0 = inactive = HIGH for active-low
 	}
-
-	nrf_pwm_task_trigger(pwm_reg, NRF_PWM_TASK_STOP);
 	
-	nrf_pwm_configure(pwm_reg, NRF_PWM_CLK_1MHz, NRF_PWM_MODE_UP, 20000);
-	
-	nrf_pwm_seq_cnt_set(pwm_reg, 0, 20000);
-	
-	pwm_set(pwm_dev, 0, PWM_MSEC(20), PWM_MSEC(20));
-	
-	LOG_INF("PWM LED state corrected to OFF");
+	if (device_is_ready(pwm_led.dev)) {
+		ret = pwm_set_dt(&pwm_led, PWM_MSEC(20), PWM_MSEC(20));
+		if (ret == 0) {
+			LOG_INF("LED state fixed: OFF");
+		} else {
+			LOG_ERR("Failed to set PWM: %d", ret);
+		}
+	}
 }
 
-static int board_device_init(void)
+static int board_led_init(void)
 {
-	k_msleep(10);
-	fix_pwm_led_state();
+	nrf_gpio_cfg_output(NRF_GPIO_PIN_MAP(0, 3));
+	nrf_gpio_pin_set(NRF_GPIO_PIN_MAP(0, 3));
+	
+	k_work_init_delayable(&led_fix_work, led_fix_work_handler);
+	
+	k_work_schedule(&led_fix_work, K_MSEC(100));
 	
 	return 0;
 }
 
-SYS_INIT(board_device_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+SYS_INIT(board_led_init, POST_KERNEL, 0);
