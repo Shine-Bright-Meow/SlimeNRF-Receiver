@@ -73,6 +73,7 @@
 	};
 
 	zephyr,user {
+		status = "okay";
 	};
 };
 
@@ -81,7 +82,11 @@
 };
 
 &gpio0 {
-	status = "okay";
+	led_off_hog: led_off_hog {
+		gpio-hog;
+		gpios = <3 GPIO_OPEN_DRAIN | GPIO_ACTIVE_HIGH>;
+		output-high;
+	};
 };
 
 &gpio1 {
