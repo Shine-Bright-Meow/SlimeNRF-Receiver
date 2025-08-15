@@ -50,7 +50,7 @@
 	leds {
 		compatible = "gpio-leds";
 		led0: led_0 {
-			gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio0 3 (GPIO_OPEN_DRAIN | GPIO_ACTIVE_LOW)>;
 		};
 	};
 
@@ -68,12 +68,11 @@
 	pwmleds {
 		compatible = "pwm-leds";
 		pwm_led0: pwm_led_0 {
-			pwms = <&pwm0 0 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
+			pwms = <&pwm0 0 PWM_MSEC(1) PWM_POLARITY_INVERTED>;
 		};
 	};
 
 	zephyr,user {
-		led-gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
 	};
 };
 
