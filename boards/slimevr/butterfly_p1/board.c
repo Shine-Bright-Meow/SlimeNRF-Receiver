@@ -10,39 +10,49 @@
 #include <zephyr/drivers/pwm.h>
 #include <zephyr/logging/log.h>
 #include <hal/nrf_gpio.h>
+#include <hal/nrf_pwm.h>
 
 LOG_MODULE_REGISTER(board, LOG_LEVEL_INF);
 
-static int board_early_init(void)
+#define PWM_NODE DT_NODELABEL(pwm0)
+#define LED_PIN 3
+
+static int board_pre_init(void)
 {
-	nrf_gpio_cfg_output(NRF_GPIO_PIN_MAP(0, 3));
-	nrf_gpio_pin_set(NRF_GPIO_PIN_MAP(0, 3));
+	nrf_gpio_cfg_output(NRF_GPIO_PIN_MAP(0, LED_PIN));
+	nrf_gpio_pin_set(NRF_GPIO_PIN_MAP(0, LED_PIN));
 	
 	return 0;
 }
+SYS_INIT(board_pre_init, PRE_KERNEL_1, 0);
 
-SYS_INIT(board_early_init, PRE_KERNEL_1, 0);
-
-static int board_pwm_init(void)
+static void fix_pwm_led_state(void)
 {
 	const struct device *pwm_dev;
-	int ret;
-
-	pwm_dev = DEVICE_DT_GET(DT_NODELABEL(pwm0));
+	NRF_PWM_Type *pwm_reg = (NRF_PWM_Type *)DT_REG_ADDR(PWM_NODE);
+	
+	pwm_dev = DEVICE_DT_GET(PWM_NODE);
 	if (!device_is_ready(pwm_dev)) {
-		LOG_WRN("PWM device not ready yet");
-		return -ENODEV;
+		return;
 	}
 
-	ret = pwm_set(pwm_dev, 0, PWM_MSEC(20), PWM_MSEC(20));
-	if (ret) {
-		LOG_ERR("Failed to set PWM to OFF state: %d", ret);
-		return ret;
-	}
+	nrf_pwm_task_trigger(pwm_reg, NRF_PWM_TASK_STOP);
+	
+	nrf_pwm_configure(pwm_reg, NRF_PWM_CLK_1MHz, NRF_PWM_MODE_UP, 20000);
+	
+	nrf_pwm_seq_cnt_set(pwm_reg, 0, 20000);
+	
+	pwm_set(pwm_dev, 0, PWM_MSEC(20), PWM_MSEC(20));
+	
+	LOG_INF("PWM LED state corrected to OFF");
+}
 
-	LOG_INF("PWM initialized with LED in OFF state");
+static int board_device_init(void)
+{
+	k_msleep(10);
+	fix_pwm_led_state();
 	
 	return 0;
 }
 
-SYS_INIT(board_pwm_init, POST_KERNEL, 99);
+SYS_INIT(board_device_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
