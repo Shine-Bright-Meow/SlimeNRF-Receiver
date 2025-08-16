@@ -28,7 +28,6 @@
 
 	aliases {
 		sw0 = &button0;
-		led0 = &led0;
 		pwm-led0 = &pwm_led0;
 	};
 
