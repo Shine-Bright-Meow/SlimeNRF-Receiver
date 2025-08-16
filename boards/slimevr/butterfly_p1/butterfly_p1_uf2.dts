@@ -74,7 +74,7 @@
 	};
 
 	zephyr,user {
-		status = "okay";
+		led0-gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
 	};
 };
 
