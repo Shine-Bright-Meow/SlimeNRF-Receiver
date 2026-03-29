@@ -268,6 +268,9 @@ jobs:
         id: build-firmware
         run: |
           cd zephyr-workspace
+          cd zephyr
+          ls
+          cd ..
           sed -i "/printk(FW_STRING);/a printk(\"Repo: ${{ needs.setup.outputs.repo }}@${{ needs.setup.outputs.branch }} | SDK: ${{ needs.setup.outputs.sdk-revision }}\\\\n\");" SlimeVR-Tracker-nRF/src/console.c
           sudo rm -rf Releases
           mkdir -p Releases
