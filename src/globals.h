@@ -34,7 +34,7 @@
 #endif
 
 // How many packets to receive from one ID in a second before we consider it valid
-#define DETECTION_THRESHOLD 5
+#define DETECTION_THRESHOLD 3
 
 // TODO: move to esb
 extern uint8_t stored_trackers;
