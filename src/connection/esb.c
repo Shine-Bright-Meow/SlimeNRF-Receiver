@@ -149,10 +149,7 @@ void event_handler(struct esb_evt const *event)
 				uint8_t tracker_id = rx_payload.data[1];
 				uint8_t next = sequences[tracker_id] + 1; // wrap
 				if(seq != 0 && sequences[tracker_id] != 0 && next != seq) {
-					if (k_uptime_get() - last_seq_time[tracker_id] < 250 && ((next < 128) // reset sequence if last packet was over 100ms old
-						? ((seq < next) || (seq >= next + 128)) // next 0-127: seq is below next or above or equal to next +128
-						: ((seq < next) && (seq >= next - 128)))) // next 128-255: seq is below next and above or equal to next -128
-					{
+					if (k_uptime_get() - last_seq_time[tracker_id] < 250 && abs((int8_t)(next - seq)) > 2) {
 						LOG_WRN("Sequence missmatch for tracker %d, expected %d, got %d. Discarding.", tracker_id, next, seq);
 						break;
 					}
